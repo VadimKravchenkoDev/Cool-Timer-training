@@ -1,6 +1,9 @@
 package com.kravchenkovadim.cooltimerkotlin;
 
 import android.os.Bundle;
+import android.os.CountDownTimer;
+import android.util.Log;
+import android.widget.Button;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
@@ -14,6 +17,7 @@ import androidx.core.view.WindowInsetsCompat;
 public class MainActivity extends AppCompatActivity {
     private SeekBar seekBar;
     private TextView textView;
+    private Button button;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -29,34 +33,47 @@ public class MainActivity extends AppCompatActivity {
 
         seekBar = findViewById(R.id.seekBar);
         textView = findViewById(R.id.textView);
+        button = findViewById(R.id.button);
         seekBar.setMax(600);
         seekBar.setProgress(10);
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean b) {
-                int minute = progress/60;
-                int second = progress-minute*60;
-                String stMinute=""+minute;
-                String stSecond=""+second;
-                if(minute<10){
-                    stMinute = "0" + minute;
-                }
-                if(second<10){
-                    stSecond = "0" + second;
-                }
-                textView.setText(stMinute + ":"+ stSecond);
+            long l = progress*1000;
+                updateTimer(l);
             }
-
             @Override
             public void onStartTrackingTouch(SeekBar seekBar) {
-
             }
-
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
-
             }
         });
-    }
+        button.setOnClickListener(view -> {
+            CountDownTimer countDownTimer = new CountDownTimer(seekBar.getProgress()*1000,1000) {
+                @Override
+                public void onTick(long l) {
+                    updateTimer(l);
+                }
 
+                @Override
+                public void onFinish() {
+                    Log.d("mylog", "It's work!");
+                }
+            }.start();
+        });
+    }
+    private void updateTimer(long millisec){
+        int minute = (int) millisec/1000/60;
+        int second = (int) millisec/1000-minute*60;
+        String stMinute=""+minute;
+        String stSecond=""+second;
+        if(minute<10){
+            stMinute = "0" + minute;
+        }
+        if(second<10){
+            stSecond = "0" + second;
+        }
+        textView.setText(stMinute + ":"+ stSecond);
+    }
 }
