@@ -29,6 +29,34 @@ public class MainActivity extends AppCompatActivity {
 
         seekBar = findViewById(R.id.seekBar);
         textView = findViewById(R.id.textView);
+        seekBar.setMax(600);
+        seekBar.setProgress(10);
+        seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean b) {
+                int minute = progress/60;
+                int second = progress-minute*60;
+                String stMinute=""+minute;
+                String stSecond=""+second;
+                if(minute<10){
+                    stMinute = "0" + minute;
+                }
+                if(second<10){
+                    stSecond = "0" + second;
+                }
+                textView.setText(stMinute + ":"+ stSecond);
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
     }
 
 }
