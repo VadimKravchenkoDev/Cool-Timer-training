@@ -19,7 +19,10 @@ public class MainActivity extends AppCompatActivity {
     private SeekBar seekBar;
     private TextView textView;
     private Button button;
+    private CountDownTimer countDownTimer;
     private MediaPlayer mediaPlayer;
+    private boolean isTimerOf = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -41,42 +44,63 @@ public class MainActivity extends AppCompatActivity {
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean b) {
-            long l = progress*1000;
+                long l = progress * 1000;
                 updateTimer(l);
             }
+
             @Override
             public void onStartTrackingTouch(SeekBar seekBar) {
             }
+
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
             }
         });
         button.setOnClickListener(view -> {
-            CountDownTimer countDownTimer = new CountDownTimer(seekBar.getProgress()*1000,1000) {
-                @Override
-                public void onTick(long l) {
-                    updateTimer(l);
-                }
+            if (!isTimerOf) {
+                countDownTimer = new CountDownTimer(seekBar.getProgress() * 1000, 1000) {
+                    @Override
+                    public void onTick(long l) {
+                        updateTimer(l);
+                    }
 
-                @Override
-                public void onFinish() {
-                    mediaPlayer = MediaPlayer.create(getApplicationContext(), R.raw.bell_sound);
-                    mediaPlayer.start();
-                }
-            }.start();
+                    @Override
+                    public void onFinish() {
+                        mediaPlayer = MediaPlayer.create(getApplicationContext(), R.raw.bell_sound);
+                        mediaPlayer.start();
+                        resetTimer();
+                    }
+                }.start();
+                seekBar.setEnabled(false);
+                button.setText("STOP");
+                isTimerOf = true;
+            } else {
+                resetTimer();
+            }
+
         });
     }
-    private void updateTimer(long millisec){
-        int minute = (int) millisec/1000/60;
-        int second = (int) millisec/1000-minute*60;
-        String stMinute=""+minute;
-        String stSecond=""+second;
-        if(minute<10){
+
+    private void updateTimer(long millisec) {
+        int minute = (int) millisec / 1000 / 60;
+        int second = (int) millisec / 1000 - minute * 60;
+        String stMinute = "" + minute;
+        String stSecond = "" + second;
+        if (minute < 10) {
             stMinute = "0" + minute;
         }
-        if(second<10){
+        if (second < 10) {
             stSecond = "0" + second;
         }
-        textView.setText(stMinute + ":"+ stSecond);
+        textView.setText(stMinute + ":" + stSecond);
+    }
+
+    private void resetTimer() {
+        countDownTimer.cancel();
+        seekBar.setEnabled(true);
+        seekBar.setProgress(59);
+        button.setText("START");
+        textView.setText("00:59");
+        isTimerOf = false;
     }
 }
