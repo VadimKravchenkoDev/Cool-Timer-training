@@ -1,5 +1,6 @@
 package com.kravchenkovadim.cooltimerkotlin;
 
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.util.Log;
@@ -18,6 +19,7 @@ public class MainActivity extends AppCompatActivity {
     private SeekBar seekBar;
     private TextView textView;
     private Button button;
+    private MediaPlayer mediaPlayer;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -35,7 +37,7 @@ public class MainActivity extends AppCompatActivity {
         textView = findViewById(R.id.textView);
         button = findViewById(R.id.button);
         seekBar.setMax(600);
-        seekBar.setProgress(10);
+        seekBar.setProgress(59);
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean b) {
@@ -58,7 +60,8 @@ public class MainActivity extends AppCompatActivity {
 
                 @Override
                 public void onFinish() {
-                    Log.d("mylog", "It's work!");
+                    mediaPlayer = MediaPlayer.create(getApplicationContext(), R.raw.bell_sound);
+                    mediaPlayer.start();
                 }
             }.start();
         });
