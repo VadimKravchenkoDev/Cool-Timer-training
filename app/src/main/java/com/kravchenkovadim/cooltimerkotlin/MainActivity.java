@@ -3,6 +3,8 @@ package com.kravchenkovadim.cooltimerkotlin;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.widget.Button;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -78,7 +80,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
-
     private void setTimer(long progress) {
         int minutes = (int) progress / 1000 / 60;
         int seconds = (int) progress / 1000 - minutes * 60;
@@ -96,7 +97,6 @@ public class MainActivity extends AppCompatActivity {
         }
         textView.setText(stMinutes + ":" + stSeconds);
     }
-
     private void resetTimer() {
         button.setText("START");
         seekBar.setEnabled(true);
@@ -104,5 +104,12 @@ public class MainActivity extends AppCompatActivity {
         textView.setText("00:59");
         isTimerOn = false;
         countDownTimer.cancel();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater menuInflater = getMenuInflater();
+        menuInflater.inflate(R.menu.timer_menu, menu);
+        return super.onCreateOptionsMenu(menu);
     }
 }
