@@ -14,6 +14,7 @@ import androidx.core.view.WindowInsetsCompat;
 public class MainActivity extends AppCompatActivity {
     private SeekBar seekBar;
     private TextView textView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -33,8 +34,22 @@ public class MainActivity extends AppCompatActivity {
         seekBar.setProgress(59);
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
-            public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
-                
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean b) {
+                int minutes = progress / 60;
+                int seconds = progress - minutes * 60;
+                String stMinutes = "";
+                String stSeconds = "";
+                if(minutes<10){
+                    stMinutes="0"+minutes;
+                } else {
+                    stMinutes = ""+minutes;
+                }
+                if(seconds<10){
+                    stSeconds="0"+seconds;
+                } else {
+                    stSeconds = ""+seconds;
+                }
+                textView.setText(stMinutes+":"+stSeconds);
             }
 
             @Override
