@@ -1,5 +1,6 @@
 package com.kravchenkovadim.cooltimerkotlin;
 
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.widget.Button;
@@ -18,6 +19,8 @@ public class MainActivity extends AppCompatActivity {
     private TextView textView;
     private Button button;
     private CountDownTimer countDownTimer;
+    private boolean isTimerOn;
+    MediaPlayer mediaPlayer;
 
 
     @Override
@@ -32,7 +35,7 @@ public class MainActivity extends AppCompatActivity {
         });
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
+        isTimerOn = false;
         seekBar = findViewById(R.id.seekBar);
         textView = findViewById(R.id.textView);
         seekBar.setMax(600);
@@ -40,7 +43,7 @@ public class MainActivity extends AppCompatActivity {
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean b) {
-                progress=progress*1000;
+                progress = progress * 1000;
                 setTimer(progress);
             }
 
@@ -54,17 +57,27 @@ public class MainActivity extends AppCompatActivity {
         });
         button = findViewById(R.id.button);
         button.setOnClickListener(view -> {
-            countDownTimer = new CountDownTimer(seekBar.getProgress() * 1000L, 1000) {
-                @Override
-                public void onTick(long l) {
-                    setTimer(l);
-                }
+            if (!isTimerOn) {
+                button.setText("STOP");
+                seekBar.setEnabled(false);
+                isTimerOn = true;
+                countDownTimer = new CountDownTimer(seekBar.getProgress() * 1000L, 1000) {
+                    @Override
+                    public void onTick(long l) {
+                        setTimer(l);
+                    }
+                    @Override
+                    public void onFinish() {
+                        mediaPlayer = MediaPlayer.create(getApplicationContext(), R.raw.bell_sound);
+                        mediaPlayer.start();
+                        resetTimer();
+                        textView.setText("00:59");
+                    }
+                }.start();
+            } else {
+                resetTimer();
+            }
 
-                @Override
-                public void onFinish() {
-
-                }
-            }.start();
         });
 
     }
@@ -85,5 +98,11 @@ public class MainActivity extends AppCompatActivity {
             stSeconds = "" + seconds;
         }
         textView.setText(stMinutes + ":" + stSeconds);
+    }
+    private void resetTimer(){
+        button.setText("START");
+        seekBar.setEnabled(true);
+        isTimerOn = false;
+        countDownTimer.cancel();
     }
 }
