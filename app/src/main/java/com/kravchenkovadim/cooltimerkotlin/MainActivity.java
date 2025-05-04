@@ -20,8 +20,7 @@ public class MainActivity extends AppCompatActivity {
     private Button button;
     private CountDownTimer countDownTimer;
     private boolean isTimerOn;
-    MediaPlayer mediaPlayer;
-
+    private MediaPlayer mediaPlayer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,6 +37,7 @@ public class MainActivity extends AppCompatActivity {
         isTimerOn = false;
         seekBar = findViewById(R.id.seekBar);
         textView = findViewById(R.id.textView);
+        button = findViewById(R.id.button);
         seekBar.setMax(600);
         seekBar.setProgress(59);
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
@@ -46,15 +46,14 @@ public class MainActivity extends AppCompatActivity {
                 progress = progress * 1000;
                 setTimer(progress);
             }
-
             @Override
             public void onStartTrackingTouch(SeekBar seekBar) {
             }
-
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
             }
         });
+
         button = findViewById(R.id.button);
         button.setOnClickListener(view -> {
             if (!isTimerOn) {
@@ -66,20 +65,18 @@ public class MainActivity extends AppCompatActivity {
                     public void onTick(long l) {
                         setTimer(l);
                     }
+
                     @Override
                     public void onFinish() {
                         mediaPlayer = MediaPlayer.create(getApplicationContext(), R.raw.bell_sound);
                         mediaPlayer.start();
                         resetTimer();
-                        textView.setText("00:59");
                     }
                 }.start();
             } else {
                 resetTimer();
             }
-
         });
-
     }
 
     private void setTimer(long progress) {
@@ -99,9 +96,12 @@ public class MainActivity extends AppCompatActivity {
         }
         textView.setText(stMinutes + ":" + stSeconds);
     }
-    private void resetTimer(){
+
+    private void resetTimer() {
         button.setText("START");
         seekBar.setEnabled(true);
+        seekBar.setProgress(59);
+        textView.setText("00:59");
         isTimerOn = false;
         countDownTimer.cancel();
     }
