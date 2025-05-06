@@ -21,4 +21,5 @@ public class SettingActivity2 extends AppCompatActivity {
             return insets;
         });
     }
+
 }

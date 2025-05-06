@@ -123,6 +123,10 @@ public class MainActivity extends AppCompatActivity {
             Intent openSettings = new Intent(this, SettingActivity2.class);
             startActivity(openSettings);
             return true;
+        }else if(id==R.id.about){
+            Intent openSettings = new Intent(this, About.class);
+            startActivity(openSettings);
+            return true;
         }
         return super.onOptionsItemSelected(item);
     }
