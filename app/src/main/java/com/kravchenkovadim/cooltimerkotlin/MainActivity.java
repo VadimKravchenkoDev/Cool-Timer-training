@@ -5,7 +5,7 @@ import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.view.Menu;
-import android.view.MenuInflater;
+
 import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.SeekBar;
@@ -51,9 +51,11 @@ public class MainActivity extends AppCompatActivity {
                 progress = progress * 1000;
                 setTimer(progress);
             }
+
             @Override
             public void onStartTrackingTouch(SeekBar seekBar) {
             }
+
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
             }
@@ -108,24 +110,21 @@ public class MainActivity extends AppCompatActivity {
         isTimerOn = false;
         countDownTimer.cancel();
     }
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater menuInflater = getMenuInflater();
-        menuInflater.inflate(R.menu.timer_menu, menu);
+        getMenuInflater().inflate(R.menu.menu, menu);
         return super.onCreateOptionsMenu(menu);
     }
-
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         int id = item.getItemId();
-        if(id == R.id.settings){
-            Intent openSettings = new Intent(this, SettingActivity2.class);
-            startActivity(openSettings);
+        if (id == R.id.settings) {
+            Intent intent = new Intent(this, Settings.class);
+            startActivity(intent);
             return true;
-        }else if(id==R.id.about){
-            Intent openSettings = new Intent(this, About.class);
-            startActivity(openSettings);
+        } else if (id == R.id.about) {
+            Intent intent = new Intent(this, About.class);
+            startActivity(intent);
             return true;
         }
         return super.onOptionsItemSelected(item);
