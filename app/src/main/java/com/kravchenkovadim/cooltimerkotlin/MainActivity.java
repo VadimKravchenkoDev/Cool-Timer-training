@@ -50,9 +50,11 @@ public class MainActivity extends AppCompatActivity {
                 progress = progress * 1000;
                 setTimer(progress);
             }
+
             @Override
             public void onStartTrackingTouch(SeekBar seekBar) {
             }
+
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
             }
@@ -119,11 +121,11 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         int id = item.getItemId();
-        if (id==R.id.settings){
+        if (id == R.id.settings) {
             Intent intent = new Intent(this, Settings.class);
             startActivity(intent);
             return true;
-        } else if(id == R.id.about){
+        } else if (id == R.id.about) {
             Intent intent = new Intent(this, About.class);
             startActivity(intent);
             return true;
