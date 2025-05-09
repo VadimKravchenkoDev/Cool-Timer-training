@@ -6,6 +6,5 @@
     android:title="Enabled sound"
     android:summaryOff="Sound disabled"
     android:summaryOn="Sound enabled">
-
 </CheckBoxPreference>
 </androidx.preference.PreferenceScreen>

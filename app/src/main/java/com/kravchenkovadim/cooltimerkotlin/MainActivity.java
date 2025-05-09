@@ -1,12 +1,14 @@
 package com.kravchenkovadim.cooltimerkotlin;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.view.Menu;
 
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Button;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -14,10 +16,10 @@ import android.widget.TextView;
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.preference.PreferenceManager;
 
 public class MainActivity extends AppCompatActivity {
     private SeekBar seekBar;
@@ -32,6 +34,12 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
+        View container = findViewById(R.id.mainActivity);
+        ViewCompat.setOnApplyWindowInsetsListener(container, (v, insets) -> {
+            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            v.setPadding(0, systemBars.top, 0, 0);
+            return insets;
+        });
         isTimerOn = false;
         seekBar = findViewById(R.id.seekBar);
         textView = findViewById(R.id.textView);
@@ -68,8 +76,12 @@ public class MainActivity extends AppCompatActivity {
 
                     @Override
                     public void onFinish() {
-                        mediaPlayer = MediaPlayer.create(getApplicationContext(), R.raw.bell_sound);
-                        mediaPlayer.start();
+                        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+                        if(sharedPreferences.getBoolean("enabled_sound",true)){
+                            mediaPlayer = MediaPlayer.create(getApplicationContext(), R.raw.bell_sound);
+                            mediaPlayer.start();
+                        }
+
                         resetTimer();
                     }
                 }.start();
