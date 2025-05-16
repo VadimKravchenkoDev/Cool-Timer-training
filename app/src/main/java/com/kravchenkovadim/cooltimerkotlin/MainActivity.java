@@ -73,15 +73,22 @@ public class MainActivity extends AppCompatActivity {
                     public void onTick(long l) {
                         setTimer(l);
                     }
-
                     @Override
                     public void onFinish() {
                         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-                        if(sharedPreferences.getBoolean("enabled_sound",true)){
-                            mediaPlayer = MediaPlayer.create(getApplicationContext(), R.raw.bell_sound);
-                            mediaPlayer.start();
+                        if (sharedPreferences.getBoolean("enabled_sound", true)) {
+                            String melodyName = sharedPreferences.getString("timer_melody", "bell");
+                            if (melodyName.equals("bell")) {
+                                mediaPlayer = MediaPlayer.create(getApplicationContext(), R.raw.bell_sound);
+                                mediaPlayer.start();
+                            } else if (melodyName.equals("bip")) {
+                                mediaPlayer = MediaPlayer.create(getApplicationContext(), R.raw.bip_sound);
+                                mediaPlayer.start();
+                            } else if (melodyName.equals("alarm")) {
+                                mediaPlayer = MediaPlayer.create(getApplicationContext(), R.raw.alarm_siren_sound);
+                                mediaPlayer.start();
+                            }
                         }
-
                         resetTimer();
                     }
                 }.start();
@@ -107,6 +114,7 @@ public class MainActivity extends AppCompatActivity {
         }
         textView.setText(stMinutes + ":" + stSeconds);
     }
+
     private void resetTimer() {
         button.setText("START");
         seekBar.setEnabled(true);
@@ -115,11 +123,13 @@ public class MainActivity extends AppCompatActivity {
         isTimerOn = false;
         countDownTimer.cancel();
     }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu, menu);
         return super.onCreateOptionsMenu(menu);
     }
+
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         int id = item.getItemId();
