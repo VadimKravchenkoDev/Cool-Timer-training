@@ -35,23 +35,21 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
             }
         }
     }
-
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, @Nullable String key) {
-        assert key != null;
+        if (key == null) return;
+
         Preference preference = findPreference(key);
-        if (preference instanceof CheckBoxPreference) {
-            String value = sharedPreferences.getString(preference.getKey(), "");
+        if (preference != null && !(preference instanceof CheckBoxPreference)) {
+            String value = sharedPreferences.getString(key, "");
             setPreferenceLabel(preference, value);
         }
     }
-
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getPreferenceScreen().getSharedPreferences().registerOnSharedPreferenceChangeListener(this);
     }
-
     @Override
     public void onDestroy() {
         super.onDestroy();
