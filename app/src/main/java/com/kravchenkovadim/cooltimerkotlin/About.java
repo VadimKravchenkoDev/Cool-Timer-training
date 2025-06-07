@@ -2,6 +2,7 @@ package com.kravchenkovadim.cooltimerkotlin;
 
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.view.View;
 
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
@@ -20,6 +21,13 @@ public class About extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_about);
+        View container = findViewById(R.id.activityAbout);
+        ViewCompat.setOnApplyWindowInsetsListener(container, (v, insets) -> {
+            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            v.setPadding(0, systemBars.top, 0, 0);
+            return insets;
+        });
+
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
@@ -35,3 +43,4 @@ public class About extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 }
+//commit
