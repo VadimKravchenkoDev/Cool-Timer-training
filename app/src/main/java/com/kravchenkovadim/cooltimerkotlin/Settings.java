@@ -42,4 +42,4 @@ public class Settings extends AppCompatActivity {
         }
         return super.onOptionsItemSelected(item);
     }
-}
+}//comment
