@@ -136,5 +136,4 @@ public class MainActivity extends AppCompatActivity {
         }
         return super.onMenuOpened(featureId, menu);
     }
-
 }
