@@ -4,56 +4,48 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.annotation.Nullable;
-import androidx.preference.CheckBoxPreference;
 import androidx.preference.ListPreference;
-import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
-import androidx.preference.PreferenceScreen;
 
-public class SettingsFragment extends PreferenceFragmentCompat implements SharedPreferences.OnSharedPreferenceChangeListener {
+import java.util.Objects;
+
+public class SettingsFragment  extends PreferenceFragmentCompat implements SharedPreferences.OnSharedPreferenceChangeListener {
     @Override
-    public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
-        addPreferencesFromResource(R.xml.timer_preference);
-        SharedPreferences sharedPreferences = getPreferenceScreen().getSharedPreferences();
-        PreferenceScreen preferenceScreen = getPreferenceScreen();
-        int count = preferenceScreen.getPreferenceCount();
-        for (int i = 0; i < count; i++) {
-            Preference preference = preferenceScreen.getPreference(i);
-            if (!(preference instanceof CheckBoxPreference)) {
-                String value = sharedPreferences.getString(preference.getKey(), "");
-                setPreferenceLabel(preference, value);
-            }
+    public void onCreatePreferences(@Nullable Bundle savedInstanceState, @Nullable String rootKey) {
+        setPreferencesFromResource(R.xml.preferences, rootKey);
+
+        ListPreference soundPref = findPreference("melody");
+        if(soundPref != null){
+            updateListPreferenceSummary(soundPref);
         }
     }
 
-    private void setPreferenceLabel(Preference preference, String value) {
-        if (preference instanceof ListPreference) {
-            ListPreference listPreference = (ListPreference) preference;
-            int index = listPreference.findIndexOfValue(value);
-            if (index >= 0) {
-                listPreference.setSummary(listPreference.getEntries()[index]);
-            }
-        }
+    private void updateListPreferenceSummary(ListPreference soundPref) {
+        soundPref.setSummary(soundPref.getEntry());
     }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        Objects.requireNonNull(getPreferenceScreen().getSharedPreferences())
+                .registerOnSharedPreferenceChangeListener(this);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        Objects.requireNonNull(getPreferenceScreen().getSharedPreferences())
+                .unregisterOnSharedPreferenceChangeListener(this);
+    }
+
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, @Nullable String key) {
-        if (key == null) return;
-
-        Preference preference = findPreference(key);
-        if (preference != null && !(preference instanceof CheckBoxPreference)) {
-            String value = sharedPreferences.getString(key, "");
-            setPreferenceLabel(preference, value);
+        assert key != null;
+        if (key.equals("melody")){
+            ListPreference soundPref = findPreference(key);
+            if(soundPref!=null){
+                updateListPreferenceSummary(soundPref);
+            }
         }
     }
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        getPreferenceScreen().getSharedPreferences().registerOnSharedPreferenceChangeListener(this);
-    }
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        getPreferenceScreen().getSharedPreferences().unregisterOnSharedPreferenceChangeListener(this);
-    }
 }
-//comment for commit

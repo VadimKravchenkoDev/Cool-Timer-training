@@ -6,9 +6,7 @@ import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.view.Menu;
-
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.Button;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -20,6 +18,8 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.preference.PreferenceManager;
+
+import java.lang.reflect.Method;
 
 public class MainActivity extends AppCompatActivity {
     private SeekBar seekBar;
@@ -34,29 +34,28 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
-        View container = findViewById(R.id.mainActivity);
-        ViewCompat.setOnApplyWindowInsetsListener(container, (v, insets) -> {
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(0, systemBars.top, 0, 0);
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+
         isTimerOn = false;
         seekBar = findViewById(R.id.seekBar);
         textView = findViewById(R.id.textView);
         button = findViewById(R.id.button);
         seekBar.setMax(600);
         seekBar.setProgress(59);
+
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean b) {
                 progress = progress * 1000;
                 setTimer(progress);
             }
-
             @Override
             public void onStartTrackingTouch(SeekBar seekBar) {
             }
-
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
             }
@@ -73,21 +72,17 @@ public class MainActivity extends AppCompatActivity {
                     public void onTick(long l) {
                         setTimer(l);
                     }
+
                     @Override
                     public void onFinish() {
-                        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-                        if (sharedPreferences.getBoolean("enabled_sound", true)) {
-                            String melodyName = sharedPreferences.getString("timer_melody", "bell");
-                            if (melodyName.equals("bell")) {
-                                mediaPlayer = MediaPlayer.create(getApplicationContext(), R.raw.bell_sound);
-                                mediaPlayer.start();
-                            } else if (melodyName.equals("bip")) {
-                                mediaPlayer = MediaPlayer.create(getApplicationContext(), R.raw.bip_sound);
-                                mediaPlayer.start();
-                            } else if (melodyName.equals("alarm")) {
-                                mediaPlayer = MediaPlayer.create(getApplicationContext(), R.raw.alarm_siren_sound);
-                                mediaPlayer.start();
-                            }
+                        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+                        boolean isChecked = prefs.getBoolean("sound", false);
+                        String sound = prefs.getString("melody", "bell");
+                        int resId = getResources().getIdentifier(sound, "raw",getPackageName());
+                        if(isChecked){
+
+                            mediaPlayer = MediaPlayer.create(getApplicationContext(), resId);
+                            mediaPlayer.start();
                         }
                         resetTimer();
                     }
@@ -97,6 +92,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
+
     private void setTimer(long progress) {
         int minutes = (int) progress / 1000 / 60;
         int seconds = (int) progress / 1000 - minutes * 60;
@@ -126,22 +122,29 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu, menu);
-        return super.onCreateOptionsMenu(menu);
+        getMenuInflater().inflate(R.menu.menu_settings,menu);
+        return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        int id = item.getItemId();
-        if (id == R.id.settings) {
-            Intent intent = new Intent(this, Settings.class);
-            startActivity(intent);
-            return true;
-        } else if (id == R.id.about) {
-            Intent intent = new Intent(this, About.class);
-            startActivity(intent);
+        if(item.getItemId()==R.id.menu_settings){
+            startActivity(new Intent(this, SettingsActivity.class));
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+    @Override
+    public boolean onMenuOpened(int featureId, Menu menu) {
+        if (menu.getClass().getSimpleName().equals("MenuBuilder")) {
+            try {
+                Method m = menu.getClass().getDeclaredMethod("setOptionalIconsVisible", Boolean.TYPE);
+                m.setAccessible(true);
+                m.invoke(menu, true);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return super.onMenuOpened(featureId, menu);
     }
 }
