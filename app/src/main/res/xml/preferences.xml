@@ -5,4 +5,13 @@
         android:title="Звук"
         android:summary="Включение/выключение звука"
         android:defaultValue="false"/>
+
+    <ListPreference
+        android:key="melody"
+        android:title="Choose the melody!"
+        android:summary="bell"
+        android:entries="@array/theme_titles"
+        android:entryValues="@array/theme_values"
+        android:defaultValue="bell"/>
+
 </androidx.preference.PreferenceScreen>

@@ -1,6 +1,7 @@
 package com.kravchenkovadim.cooltimerkotlin;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.CountDownTimer;
@@ -13,10 +14,10 @@ import android.widget.TextView;
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.preference.PreferenceManager;
 
 import java.lang.reflect.Method;
 
@@ -45,6 +46,7 @@ public class MainActivity extends AppCompatActivity {
         button = findViewById(R.id.button);
         seekBar.setMax(600);
         seekBar.setProgress(59);
+
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean b) {
@@ -73,8 +75,15 @@ public class MainActivity extends AppCompatActivity {
 
                     @Override
                     public void onFinish() {
-                        mediaPlayer = MediaPlayer.create(getApplicationContext(), R.raw.bell_sound);
-                        mediaPlayer.start();
+                        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+                        boolean isChecked = prefs.getBoolean("sound", false);
+                        String sound = prefs.getString("melody", "bell");
+                        int resId = getResources().getIdentifier(sound, "raw",getPackageName());
+                        if(isChecked){
+
+                            mediaPlayer = MediaPlayer.create(getApplicationContext(), resId);
+                            mediaPlayer.start();
+                        }
                         resetTimer();
                     }
                 }.start();
